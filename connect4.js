@@ -11,8 +11,10 @@ class Game {
       this.width = width,
       this.height = height,
       this.currPlayer = 1,
+      this.handleClick = this.handleClick.bind(this);
       this.board = this.makeBoard();
       this.makeHtmlBoard();
+     
   }
 
   makeBoard() {
@@ -30,7 +32,7 @@ class Game {
     // make column tops (clickable area for adding a piece to that column)
     const top = document.createElement('tr');
     top.setAttribute('id', 'column-top');
-    top.addEventListener('click', this.handleClick.bind(this));  //?????   //need to check on bind for this handle click
+    top.addEventListener('click', this.handleClick);  //?????   //need to check on bind for this handle click
 
     for (let x = 0; x < this.width; x++) {
       const headCell = document.createElement('td');
@@ -77,6 +79,7 @@ class Game {
 /** endGame: announce game end */
 
   endGame(msg) {
+    this.freezeGame(); 
     alert(msg);
   }
 /** handleClick: handle click of column top to play piece */
@@ -111,7 +114,7 @@ class Game {
   /** checkForWin: check board cell-by-cell for "does a win start here?" */
 
   checkForWin() {
-    const _win = cells => {
+    let _win = cells => {
     // function _win(cells) {
       // Check four cells to see if they're all color of current player
       //  - cells: list of four (y, x) cells
@@ -122,7 +125,7 @@ class Game {
           y >= 0 &&
           y < this.height &&
           x >= 0 &&
-          x < this.WIDTH &&
+          x < this.width &&
           this.board[y][x] === this.currPlayer
       );
     }
@@ -144,6 +147,14 @@ class Game {
       }
     }
   }
-}
 
-new Game(6, 7);
+  freezeGame() {
+    let topRow = document.getElementById('column-top');
+    topRow.removeEventListener('click', this.handleClick);
+  }
+
+}
+const gameButton = document.getElementById('start-game');
+gameButton.addEventListener('click', () => {
+  new Game(6, 7);
+})
